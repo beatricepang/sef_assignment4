@@ -5,37 +5,32 @@ import java.util.Date;
 public class PrescriptionTest {
 
         // Prescription Test Cases
-        // use of assert true and assert false
-        // use of assert true to test for all valid inputs
-        // use of assert false to test for non valid inputs
+
+        // Test for all valid inputs (should pass)
         @Test
         public void testValidPrescription() {
-
                 Prescription p = new Prescription("John", "Smith", "123 Example St, Melbourne, VIC, 3000", 1.50f,
-                                -1.25f, 90,
-                                new Date(), "EyeClear");
+                                -1.25f, 90, new Date(), "EyeClear");
                 assertTrue(p.addPrescription());
         }
 
-        // test for an invalid first name
+        // Test for an invalid first name (too short)
         @Test
         public void testInvalidFirstName() {
-                Prescription p = new Prescription("Jo", "Smith", "123 Example St, Melbourne, VIC, 3000", 1.50f, -1.25f,
-                                90,
-                                new Date(), "EyeClear");
+                Prescription p = new Prescription("Jo", "Smith", "123 Example St, Melbourne, VIC, 3000", 1.50f,
+                                -1.25f, 90, new Date(), "EyeClear");
                 assertFalse(p.addPrescription());
         }
 
-        // test for an invalid last name
+        // Test for an invalid last name (too short)
         @Test
         public void testInvalidLastName() {
-                Prescription p = new Prescription("John", "Smi", "123 Example St, Melbourne, VIC, 3000", 1.50f, -1.25f,
-                                90,
-                                new Date(), "EyeClear");
+                Prescription p = new Prescription("John", "Smi", "123 Example St, Melbourne, VIC, 3000", 1.50f,
+                                -1.25f, 90, new Date(), "EyeClear");
                 assertFalse(p.addPrescription());
         }
 
-        // test for an invalid address
+        // Test for an invalid address (too short)
         @Test
         public void testInvalidAddress() {
                 Prescription p = new Prescription("John", "Smith", "Short Address", 1.50f, -1.25f, 90, new Date(),
@@ -43,95 +38,78 @@ public class PrescriptionTest {
                 assertFalse(p.addPrescription());
         }
 
-        // test for invalid sphere range input
-
+        // Test for an invalid sphere (out of range)
         @Test
         public void testInvalidSphere() {
                 Prescription p = new Prescription("John", "Smith", "123 Example St, Melbourne, VIC, 3000", 21.00f,
-                                -1.25f, 90,
-                                new Date(), "EyeClear");
+                                -1.25f, 90, new Date(), "EyeClear");
                 assertFalse(p.addPrescription());
         }
 
-        // test for invalid optometrist name
-
+        // Test for an invalid optometrist name (too short)
         @Test
         public void testInvalidOptometristName() {
                 Prescription p = new Prescription("John", "Smith", "123 Example St, Melbourne, VIC, 3000", 1.50f,
-                                -1.25f, 90,
-                                new Date(), "Eyec"); // incase of a typo
+                                -1.25f, 90, new Date(), "Eyec");
                 assertFalse(p.addPrescription());
         }
 
         // Remark Test Cases
 
-        // test for valid remark
+        // Test for a valid remark (should pass)
         @Test
         public void testValidRemark() {
                 Prescription p = new Prescription("John", "Smith", "123 Example St, Melbourne, VIC, 3000", 1.50f,
-                                -1.25f, 90,
-                                new Date(), "EyeClear");
-                Prescription.Remark r = p.new Remark("This is a great and valid remark slay.", "client");
-                assertTrue(r.addRemark());
+                                -1.25f, 90, new Date(), "EyeClear");
+                assertTrue(p.addRemark("This is a great and valid remark.", "client"));
         }
 
-        // test for invalid word count
+        // Test for an invalid remark (word count too short)
         @Test
         public void testInvalidWordCount() {
                 Prescription p = new Prescription("John", "Smith", "123 Example St, Melbourne, VIC, 3000", 1.50f,
-                                -1.25f, 90,
-                                new Date(), "EyeClear");
-                Prescription.Remark r = p.new Remark("Too short", "client");
-                assertFalse(r.addRemark());
+                                -1.25f, 90, new Date(), "EyeClear");
+                assertFalse(p.addRemark("Too short", "client"));
         }
 
-        // test for invalid category eg: not client or optometrist
+        // Test for an invalid category (not "client" or "optometrist")
         @Test
         public void testInvalidCategory() {
                 Prescription p = new Prescription("John", "Smith", "123 Example St, Melbourne, VIC, 3000", 1.50f,
-                                -1.25f, 90,
-                                new Date(), "EyeClear");
-                Prescription.Remark r = p.new Remark("This is a valid remark.", "invalidCategory");
-                assertFalse(r.addRemark());
+                                -1.25f, 90, new Date(), "EyeClear");
+                assertFalse(p.addRemark("This is a valid remark.", "invalidCategory"));
         }
 
-        // test for exceeding word limit
         @Test
         public void testRemarkExceedingWordLimit() {
                 Prescription p = new Prescription("John", "Smith", "123 Example St, Melbourne, VIC, 3000", 1.50f,
-                                -1.25f, 90,
-                                new Date(), "EyeClear");
-                Prescription.Remark r = p.new Remark(
-                                "This remark exceeds the allowed word count for a valid entry and contains unnecessary repetitions and off-topic content, which may not meet the professionalism required for documentation.",
-                                "client");
-                assertFalse(r.addRemark());
+                                -1.25f, 90, new Date(), "EyeClear");
+
+                String longRemark = "This remark exceeds the allowed word count for a valid entry. "
+                                + "It contains unnecessary repetitions and excessive length to ensure "
+                                + "that it violates the 20-word limit enforced for this field.";
+
+                assertFalse(p.addRemark(longRemark, "client"));
         }
 
-        // test for no first upper case
+        // Test for a remark without uppercase first letter (should fail)
         @Test
         public void testRemarkWithoutUppercaseFirstLetter() {
                 Prescription p = new Prescription("John", "Smith", "123 Example St, Melbourne, VIC, 3000", 1.50f,
-                                -1.25f, 90,
-                                new Date(), "EyeClear");
-                Prescription.Remark r = p.new Remark("this is a valid remark but starts with a lowercase letter.",
-                                "client");
-                assertFalse(r.addRemark());
+                                -1.25f, 90, new Date(), "EyeClear");
+                assertFalse(p.addRemark("this is a valid remark but starts with lowercase.", "client"));
         }
 
-        // test for invalid amount of multiple entries
+        // Test for exceeding the maximum number of remarks (more than 2)
         @Test
         public void testForMultipleEntries() {
                 Prescription p = new Prescription("John", "Smith", "123 Example St, Melbourne, VIC, 3000", 1.50f,
-                                -1.25f, 90,
-                                new Date(), "EyeClear");
-                Prescription.Remark r1 = p.new Remark("This is the first valid remark.", "client");
-                Prescription.Remark r2 = p.new Remark("This is the second valid remark.", "optometrist");
-                Prescription.Remark r3 = p.new Remark(
-                                "Crafting this sentence carefully ensures that every word and letter counts towards the required length without going over or under, matching it exactly, with proper formatting and structure for precision.",
-                                "optometrist");
+                                -1.25f, 90, new Date(), "EyeClear");
 
-                assertTrue(r1.addRemark()); // First remark should pass
-                assertTrue(r2.addRemark()); // Second remark should pass
-                assertFalse(r3.addRemark()); // Third remark should fail
+                assertTrue(p.addRemark("This is the first valid remark.", "client")); // First remark should pass
+                assertTrue(p.addRemark("This is the second valid remark.", "optometrist"));// Second remark should pass
+                assertFalse(p.addRemark(
+                                "Crafting this sentence ensures that every word counts toward the required length.",
+                                "optometrist")); // Third remark should fail (limit exceeded)
         }
 }
