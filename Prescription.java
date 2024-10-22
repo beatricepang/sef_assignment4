@@ -16,7 +16,7 @@ public class Prescription {
     private String optometrist;
 
     private int remarkCount = 0;
-    private ArrayList<String> postRemarks = new ArrayList<>(); // To store remarks for the prescription
+    private ArrayList<String> postRemarks = new ArrayList<>();
 
     // Constructor for Prescription
     public Prescription(String firstName, String lastName, String address, float sphere, float cylinder, int axis,
@@ -33,6 +33,10 @@ public class Prescription {
 
     // Method to add a prescription
     public boolean addPrescription() {
+
+        if (firstName == null || lastName == null || address == null || optometrist == null) {
+            return false;
+        }
 
         // Condition 1: First and last names must be between 4 and 15 characters
         if (firstName.length() < 4 || firstName.length() > 15 || lastName.length() < 4 || lastName.length() > 15) {
@@ -67,18 +71,27 @@ public class Prescription {
     public boolean addRemark(String remark, String category) {
         // Condition 1: Remark word count must be between 6 and 20, first letter must be
         // uppercase
+
+        if (remark == null || category == null) {
+            // System.out.println(remark + " " + category);
+            return false;
+
+        }
         String[] words = remark.split(" ");
         if (words.length < 6 || words.length > 20 || !Character.isUpperCase(words[0].charAt(0))) {
+            // System.out.println(words);
             return false;
         }
 
         // Condition 2: Category must be "client" or "optometrist"
         if (!category.equalsIgnoreCase("client") && !category.equalsIgnoreCase("optometrist")) {
+            // System.err.println(category);
             return false;
         }
 
         // Condition 3: No more than 2 remarks per prescription
         if (remarkCount >= 2) {
+            // System.out.println(remarkCount);
             return false;
         }
 
@@ -86,6 +99,7 @@ public class Prescription {
         try (FileWriter writer = new FileWriter("review.txt", true)) {
             writer.write(remark + " (" + category + ")\n");
             remarkCount++;
+            // System.err.println(remarkCount);
             postRemarks.add(remark + " (" + category + ")"); // Add the remark to the list
         } catch (IOException e) {
             e.printStackTrace();
@@ -98,7 +112,11 @@ public class Prescription {
     // toString method for Prescription
     @Override
     public String toString() {
-        return firstName + " " + lastName + ", " + address + ", Sphere: " + sphere + ", Cylinder: " + cylinder
+        String sentence = firstName + " " + lastName + ", " + address + ", Sphere: " + sphere + ", Cylinder: "
+                + cylinder
                 + ", Axis: " + axis + ", Date: " + examDate + ", Optometrist: " + optometrist;
+
+        System.err.println(sentence);
+        return sentence;
     }
 }
